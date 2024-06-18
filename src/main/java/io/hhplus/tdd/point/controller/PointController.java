@@ -1,5 +1,12 @@
-package io.hhplus.tdd.point;
+package io.hhplus.tdd.point.controller;
 
+import io.hhplus.tdd.exception.ChargeNegativePointException;
+import io.hhplus.tdd.exception.UserNotFoundException;
+import io.hhplus.tdd.point.TransactionType;
+import io.hhplus.tdd.point.domain.PointHistory;
+import io.hhplus.tdd.point.dto.UserPointResultDto;
+import io.hhplus.tdd.point.service.PointService;
+import io.hhplus.tdd.point.domain.UserPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +26,14 @@ public class PointController {
         this.pointService = pointService;
     }
 
+
     /**
      * TODO - 특정 유저의 포인트를 조회하는 기능을 작성해주세요.
      */
     @GetMapping("{id}")
     public UserPoint point(
             @PathVariable long id
-    ) {
+    ) throws UserNotFoundException {
         /**
          * 처음에는 고정된 UserPoint를 반환해주고 예를 추가해 구현을 일반화시킨다.
          * 구현 일반화시키면서 PointService 사용
@@ -41,28 +49,31 @@ public class PointController {
     public List<PointHistory> history(
             @PathVariable long id
     ) {
-        return List.of();
+
+        return pointService.findHistoriesById(id);
     }
 
     /**
      * TODO - 특정 유저의 포인트를 충전하는 기능을 작성해주세요.
      */
     @PatchMapping("{id}/charge")
-    public UserPoint charge(
+    public UserPointResultDto charge(
             @PathVariable long id,
             @RequestBody long amount
-    ) {
-        return new UserPoint(0, 0, 0);
+    ) throws UserNotFoundException, ChargeNegativePointException {
+
+        return pointService.chargeUserPoint(id, amount, TransactionType.CHARGE);
     }
 
     /**
      * TODO - 특정 유저의 포인트를 사용하는 기능을 작성해주세요.
      */
     @PatchMapping("{id}/use")
-    public UserPoint use(
+    public UserPointResultDto use(
             @PathVariable long id,
             @RequestBody long amount
-    ) {
-        return new UserPoint(0, 0, 0);
+    ) throws UserNotFoundException, ChargeNegativePointException {
+
+        return pointService.chargeUserPoint(id, amount, TransactionType.USE);
     }
 }
