@@ -2,6 +2,7 @@ package io.hhplus.tdd.point;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,6 +12,12 @@ import java.util.List;
 public class PointController {
 
     private static final Logger log = LoggerFactory.getLogger(PointController.class);
+    private PointService pointService;
+
+    @Autowired
+    public PointController(PointService pointService) {
+        this.pointService = pointService;
+    }
 
     /**
      * TODO - 특정 유저의 포인트를 조회하는 기능을 작성해주세요.
@@ -19,7 +26,12 @@ public class PointController {
     public UserPoint point(
             @PathVariable long id
     ) {
-        return new UserPoint(0, 0, 0);
+        /**
+         * 처음에는 고정된 UserPoint를 반환해주고 예를 추가해 구현을 일반화시킨다.
+         * 구현 일반화시키면서 PointService 사용
+         */
+        //return new UserPoint(1L, 100, 0);
+        return pointService.findUserPoint(id);
     }
 
     /**
